@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import filesize from 'filesize';
 
@@ -23,19 +24,27 @@ const Import: React.FC = () => {
   const history = useHistory();
 
   async function handleUpload(): Promise<void> {
-    // const data = new FormData();
+    const data = new FormData();
 
-    // TODO
+    data.append('file', uploadedFiles[0].file);
 
     try {
-      // await api.post('/transactions/import', data);
+      await api.post('/transactions/import', data);
+      toast.success('Transação enviada com sucesso');
+      history.push('/');
     } catch (err) {
-      // console.log(err.response.error);
+      toast.error(err.response.error);
     }
   }
 
   function submitFile(files: File[]): void {
-    // TODO
+    const filesFormatted = files.map<FileProps>(item => ({
+      file: item,
+      name: item.name,
+      readableSize: `${item.size}`,
+    }));
+
+    setUploadedFiles(filesFormatted);
   }
 
   return (
